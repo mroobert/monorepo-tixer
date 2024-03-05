@@ -29,13 +29,12 @@ func main() {
 	logger.SetLogger(app.Config.Environment)
 
 	if err := app.Run(ctx); err != nil {
-		app.Shutdown()
 		slog.Error("failed to run the application", err)
 		os.Exit(1)
 	}
 }
 
-// Application holds the dependencies for the Support API.
+// Application holds the dependencies for the web application.
 type Application struct {
 	Config Config
 	Server *http.Server
@@ -88,18 +87,6 @@ func (a *Application) Run(ctx context.Context) error {
 			return fmt.Errorf("could not stop server gracefully: %w", err)
 		}
 	}
-
-	return nil
-}
-
-// Shutdown performs the gracefull shutdown sequence.
-func (a *Application) Shutdown() error {
-	// if a.HTTPServer != nil {
-	// 	if err := a.HTTPServer.Shutdown(); err != nil {
-	// 		a.HTTPServer.Close()
-	// 		return err
-	// 	}
-	// }
 
 	return nil
 }

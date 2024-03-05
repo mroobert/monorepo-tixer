@@ -1,4 +1,4 @@
-// This package is used to load environment variables.
+// This package provides support to manage environment variables.
 package env
 
 import (

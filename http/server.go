@@ -4,6 +4,8 @@ import (
 	"context"
 	"net/http"
 	"time"
+
+	"github.com/mroobert/monorepo-tixer/http/mid"
 )
 
 // ServerConfig represents the web server configuration details.
@@ -14,6 +16,7 @@ type ServerConfig struct {
 	ShutdownTimeout time.Duration
 	Addr            string
 	DebugAddr       string
+	MaxBodySize     int64
 }
 
 // Server represents an HTTP server. It is meant to wrap all HTTP functionality
@@ -23,7 +26,7 @@ type Server struct {
 	server *http.Server
 	router *http.ServeMux
 
-	Addr string
+	MaxBodySize int64
 }
 
 // NewServer creates a new server with the provided configuration.
@@ -36,11 +39,13 @@ func NewServer(cfg ServerConfig) *Server {
 			IdleTimeout:  cfg.IdleTimeout,
 		},
 		router: http.NewServeMux(),
+
+		MaxBodySize: cfg.MaxBodySize,
 	}
 
 	s.registerTicketRoutes(s.router)
 
-	s.server.Handler = s.router
+	s.server.Handler = mid.Panics(mid.Logger(s.router))
 	return s
 }
 
