@@ -1,14 +1,14 @@
-package http
+package httpio
 
 import "net/http"
 
 func (s *Server) registerTicketRoutes(r *http.ServeMux) {
 
-	r.HandleFunc("POST /tickets", s.handleCreateTicket)
-	r.HandleFunc("GET /tickets", s.handleGetAllTickets)
-	r.HandleFunc("GET /tickets/{id}", s.handleGetTicket)
-	r.HandleFunc("DELETE /tickets/{id}", s.handleDeleteTicket)
-	r.HandleFunc("PATCH /tickets/{id}", s.handleUpdateTicket)
+	r.HandleFunc("POST /v1/tickets", s.handleCreateTicket)
+	r.HandleFunc("GET /v1/tickets", s.handleGetAllTickets)
+	r.HandleFunc("GET /v1/tickets/{id}", s.handleGetTicket)
+	r.HandleFunc("DELETE /v1/tickets/{id}", s.handleDeleteTicket)
+	r.HandleFunc("PATCH  /v1/tickets/{id}", s.handleUpdateTicket)
 
 }
 

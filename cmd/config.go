@@ -5,13 +5,13 @@ import (
 	"time"
 
 	"github.com/mroobert/monorepo-tixer/env"
-	"github.com/mroobert/monorepo-tixer/http"
+	"github.com/mroobert/monorepo-tixer/httpio"
 )
 
 // Config represents the application configuration details.
 type Config struct {
-	Environment string
-	Server      http.ServerConfig
+	Env    string // the environment the application is running in.
+	Server httpio.ServerConfig
 }
 
 func LoadConfig() (Config, error) {
@@ -44,7 +44,7 @@ func LoadConfig() (Config, error) {
 		return Config{}, fmt.Errorf("loading SERVER_WRITE_TIMEOUT failed: %w", err)
 	}
 
-	serverConfig := http.ServerConfig{
+	serverConfig := httpio.ServerConfig{
 		Addr:            serverAddr,
 		IdleTimeout:     serverIdleTimeout,
 		ReadTimeout:     serverReadTimeout,
@@ -53,7 +53,7 @@ func LoadConfig() (Config, error) {
 	}
 
 	return Config{
-		Environment: environment,
-		Server:      serverConfig,
+		Env:    environment,
+		Server: serverConfig,
 	}, nil
 }

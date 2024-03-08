@@ -1,4 +1,4 @@
-package http
+package httpio
 
 import (
 	"encoding/json"
@@ -22,7 +22,7 @@ func (s *Server) readIDParam(r *http.Request) (int64, error) {
 
 // readJSON reads the request body and decodes it into dst.
 func (s *Server) readJSON(w http.ResponseWriter, r *http.Request, dst any) error {
-	r.Body = http.MaxBytesReader(w, r.Body, int64(s.MaxBodySize))
+	r.Body = http.MaxBytesReader(w, r.Body, int64(s.maxReqBodySize))
 
 	dec := json.NewDecoder(r.Body)
 	dec.DisallowUnknownFields()

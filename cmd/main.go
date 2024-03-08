@@ -9,7 +9,7 @@ import (
 	"syscall"
 
 	"github.com/mroobert/monorepo-tixer/env"
-	"github.com/mroobert/monorepo-tixer/http"
+	"github.com/mroobert/monorepo-tixer/httpio"
 	"github.com/mroobert/monorepo-tixer/logger"
 )
 
@@ -26,7 +26,7 @@ func main() {
 		fmt.Println("failed to create the application: ", err)
 		os.Exit(1)
 	}
-	logger.SetLogger(app.Config.Environment)
+	logger.SetLogger(app.Config.Env)
 
 	if err := app.Run(ctx); err != nil {
 		slog.Error("failed to run the application", err)
@@ -37,7 +37,7 @@ func main() {
 // Application holds the dependencies for the web application.
 type Application struct {
 	Config Config
-	Server *http.Server
+	Server *httpio.Server
 }
 
 // NewApplication creates a new configured Application.
@@ -47,7 +47,7 @@ func NewApplication(ctx context.Context) (*Application, error) {
 		return nil, fmt.Errorf("loading config failed: %w", err)
 	}
 
-	server := http.NewServer(cfg.Server)
+	server := httpio.NewServer(cfg.Server, cfg.Env)
 
 	return &Application{
 		Config: cfg,
@@ -65,7 +65,7 @@ func (a *Application) Run(ctx context.Context) error {
 	go func() {
 		slog.Info("starting the server",
 			slog.String("addr", a.Config.Server.Addr),
-			slog.String("env", a.Config.Environment),
+			slog.String("env", a.Config.Env),
 		)
 
 		serverErrors <- a.Server.ListenAndServe()

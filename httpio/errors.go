@@ -1,4 +1,4 @@
-package http
+package httpio
 
 import (
 	"log/slog"
@@ -30,7 +30,7 @@ func (s *Server) errorResponse(w http.ResponseWriter, r *http.Request, status in
 	}
 }
 
-func (s *Server) internalErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
+func (s *Server) internalServerErrorResponse(w http.ResponseWriter, r *http.Request, err error) {
 	s.logError(r, err)
 
 	message := "the server encountered a problem and could not process your request"
