@@ -1,7 +1,9 @@
 .DS_Store
 
-# ENVS
+# LOCAL CONFIGURATION
 .env
+.docker-data
+.vscode
 
 # Binaries for programs and plugins
 *.exe

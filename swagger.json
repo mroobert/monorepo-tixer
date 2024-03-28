@@ -1,0 +1,166 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "Ticket API",
+    "description": "API for managing tickets"
+  },
+  "servers": [{
+    "url": "http://localhost:8080",
+    "description": "Local server"
+  }],
+  "tags": [{
+    "name": "Tickets",
+    "description": "Ticket management"
+  }],
+  "paths": {
+    "/v1/tickets": {
+      "post": {
+        "tags": ["Tickets"],
+        "summary": "Create a new ticket",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "format": "int64"
+                  }
+                },
+                "example": {
+                  "title": "My Ticket",
+                  "price": 789
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Ticket created"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Read tickets",
+        "description": "Returns a list of tickets",
+        "parameters": [{
+            "name": "title",
+            "in": "query",
+            "description": "Filter by title",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "description": "Sort order",
+            "required": false,
+            "type": "string",
+            "enum": ["id", "title", "price", "-id", "-title", "-price"]
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page number",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Number of items per page",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A list of tickets"
+          }
+        }
+      }
+    },
+    "/v1/tickets/{id}": {
+      "get": {
+        "tags": ["Tickets"],
+        "summary": "Read a ticket by ID",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the ticket",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Ticket details"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tickets"],
+        "summary": "Delete a ticket by ID",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the ticket",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "Ticket deleted"
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Tickets"],
+        "summary": "Update a ticket by ID",
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "ID of the ticket",
+          "schema": {
+            "type": "string"
+          }
+        }],
+        "requestBody": {
+          "description": "Ticket update payload",
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "title": "Updated title",
+                "price": 100
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation"
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        }
+      }
+    }
+  }
+}

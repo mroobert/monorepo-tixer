@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/mroobert/monorepo-tixer/httpio/mid"
+	"github.com/mroobert/monorepo-tixer/psql"
 )
 
 // ServerConfig represents the web server configuration details.
@@ -16,7 +17,7 @@ type ServerConfig struct {
 	ShutdownTimeout time.Duration
 	Addr            string
 	DebugAddr       string
-	MaxReqBodySize  int64
+	MaxReqBodySize  int32
 }
 
 // Server represents an HTTP server. It is meant to wrap all HTTP functionality
@@ -26,7 +27,9 @@ type Server struct {
 	server         *http.Server
 	router         *http.ServeMux
 	env            string // the environment the server is running in
-	maxReqBodySize int64
+	maxReqBodySize int32
+
+	TicketRepository *psql.TicketRepository
 }
 
 // NewServer creates a new server with the provided configuration.
@@ -46,7 +49,7 @@ func NewServer(cfg ServerConfig, env string) *Server {
 	s.router.HandleFunc("/v1/healthcheck", s.handleHealthCheck)
 	s.registerTicketRoutes(s.router)
 
-	s.server.Handler = mid.Panics(mid.Logger(s.router))
+	s.server.Handler = mid.Cors(mid.Panics(mid.ContextInfo(mid.Logger(s.router))))
 	return s
 }
 

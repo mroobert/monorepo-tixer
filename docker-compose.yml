@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  postgres:
+    container_name: database
+    image: postgres:16
+    volumes:
+      - ./.docker-data/psqlData/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    volumes:
+      - ./.docker-data/pgadminData:/var/lib/pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin4@pgadming.org
+      - PGADMIN_DEFAULT_PASSWORD=admin
+      # - PGADMIN_LISTEN_PORT=5433
+    ports:
+      - "5433:80"
+
+  swagger-ui:
+    container_name: swagger-ui
+    image: swaggerapi/swagger-ui
+    ports:
+      - "9000:8080"
+    environment:
+      - SWAGGER_JSON=/api/swagger.json
+    volumes:
+      - ./swagger.json:/api/swagger.json

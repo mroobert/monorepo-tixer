@@ -11,6 +11,7 @@ import (
 	"github.com/mroobert/monorepo-tixer/env"
 	"github.com/mroobert/monorepo-tixer/httpio"
 	"github.com/mroobert/monorepo-tixer/logger"
+	"github.com/mroobert/monorepo-tixer/psql"
 )
 
 func main() {
@@ -36,18 +37,24 @@ func main() {
 
 // Application holds the dependencies for the web application.
 type Application struct {
-	Config Config
+	Config *config
 	Server *httpio.Server
 }
 
 // NewApplication creates a new configured Application.
 func NewApplication(ctx context.Context) (*Application, error) {
-	cfg, err := LoadConfig()
+	cfg, err := newConfig()
 	if err != nil {
 		return nil, fmt.Errorf("loading config failed: %w", err)
 	}
 
+	dbPool, err := psql.NewPool(cfg.Database)
+	if err != nil {
+		return nil, fmt.Errorf("connecting to db failed: %w", err)
+	}
+
 	server := httpio.NewServer(cfg.Server, cfg.Env)
+	server.TicketRepository = psql.NewTicketRepository(dbPool, cfg.Database.QueryTimeout)
 
 	return &Application{
 		Config: cfg,

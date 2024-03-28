@@ -6,18 +6,20 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"strconv"
 	"strings"
+
+	tixer "github.com/mroobert/monorepo-tixer"
 )
 
-// readIDParam reads the id parameter from the request path.
-func (s *Server) readIDParam(r *http.Request) (int64, error) {
-	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-	if err != nil || id < 1 {
-		return 0, errors.New("invalid id parameter")
+// readIDParam reads the id parameter from the request path and validates it
+// as a PublicID.
+func (s *Server) readIDParam(r *http.Request) (tixer.PublicID, error) {
+	id := r.PathValue("id")
+	if err := tixer.ValidatePublicID(id); err != nil {
+		return "", err
 	}
 
-	return id, nil
+	return tixer.PublicID(id), nil
 }
 
 // readJSON reads the request body and decodes it into dst.
@@ -61,7 +63,7 @@ func (s *Server) readJSON(w http.ResponseWriter, r *http.Request, dst any) error
 			return fmt.Errorf("invalid argument passed to [Unmarshal]: %w", err)
 
 		default:
-			return err
+			return fmt.Errorf("failed to read request body: %w", err)
 		}
 	}
 
